@@ -30,11 +30,10 @@ class TextDocument:
     def vocabulary(self):
         return self.token_count.keys()
 
-    def read_document(self, gensim_custom_tokenizer=None, batch_size=None):
+    def read_document(self, gensim_custom_tokenizer=None):
         self.token_count = defaultdict(int)
-        if batch_size is None:
-            with open(self.doc_path, "r") as f:
-                doc_body = f.read()
+        with open(self.doc_path, "r") as f:
+            doc_body = f.read()
 
             if gensim_custom_tokenizer is not None:
                 tokens = preprocess_string(doc_body, gensim_custom_tokenizer)
@@ -44,6 +43,25 @@ class TextDocument:
                 return tokens
 
         return doc_body
+
+    def read_document_gen(self, batch_size=128, gensim_custom_tokenizer=None):
+        self.token_count = defaultdict(int)
+        with open(self.doc_path, "r") as f:
+            while True:
+                lines = ""
+                for i in range(batch_size):
+                    lines += f.readline()
+
+                if gensim_custom_tokenizer is not None:
+                    tokens = preprocess_string(lines, gensim_custom_tokenizer)
+                    for token in tokens:
+                        self.token_count[token] += 1
+                    yield tokens
+                else:
+                    yield lines
+
+                if lines == "":
+                    break
 
     def get_n_top_tokens(self, n):
         return [
