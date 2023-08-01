@@ -82,5 +82,8 @@ class TextDocument:
     def get_frequent_tokens(self, min_freq):
         return [k for k, v in self.token_count.items() if v >= min_freq]
 
+    def get_rare_tokens(self, max_freq):
+        return [k for k, v in self.token_count.items() if v <= max_freq]
+
     def get_token_frequency(self, token):
         return self.token_count[token]
