@@ -45,6 +45,13 @@ class TextCorpus:
     def docs_count(self):
         return len(self.text_documents_list)
 
+    def reset(self):
+        self.text_documents_list = []
+        self.token_absolute_count = defaultdict(int)
+        self.token_doc_count = defaultdict(int)
+        self.corpus = []
+        self.labels = []
+
     def get_frequent_tokens(self, min_absolute_count, min_doc_count):
         return [
             k
@@ -62,29 +69,31 @@ class TextCorpus:
         ]
 
     def add_document(
-        self, text_document: TextDocument, count_tokens=False, batch_size=None
+        self, text_document: TextDocument, batch_size=None
     ):
         self.text_documents_list.append(text_document)
-        if count_tokens:
-            if batch_size is not None:
-                dock = []
-                for batch in text_document.read_document_gen(
+
+        if batch_size is not None:
+            dock = []
+            for batch in text_document.read_document_gen(
                     batch_size=batch_size,
                     gensim_custom_tokenizer=self.gensim_custom_tokenizer,
-                ):
-                    dock += batch
-            else:
-                dock = text_document.read_document(
-                    gensim_custom_tokenizer=self.gensim_custom_tokenizer
-                )
-            self.corpus += [dock]
-            self.labels += [text_document.doc_label]
-            for k, v in text_document.token_count.items():
-                self.token_absolute_count[k] += v
-                self.token_doc_count[k] += 1
+            ):
+                dock += batch
+        else:
+            dock = text_document.read_document(
+                gensim_custom_tokenizer=self.gensim_custom_tokenizer
+            )
 
-    def get_corpus(self, min_absolute_count, min_doc_count):
-        tokens = self.get_frequent_tokens(min_absolute_count, min_doc_count)
+        self.corpus += [dock]
+        self.labels += [text_document.doc_label]
+        for k, v in text_document.token_count.items():
+            self.token_absolute_count[k] += v
+            self.token_doc_count[k] += 1
+
+    def get_corpus(self, tokens=None):
+        if tokens is None:
+            return self.corpus
         result = []
         for dock in self.corpus:
             result += [[word for word in dock if word in tokens]]
