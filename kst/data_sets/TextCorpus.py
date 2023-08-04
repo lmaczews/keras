@@ -69,7 +69,7 @@ class TextCorpus:
         ]
 
     def add_document(
-        self, text_document: TextDocument, batch_size=None
+        self, text_document: TextDocument, batch_size=None, stream=False
     ):
         self.text_documents_list.append(text_document)
 
@@ -85,11 +85,15 @@ class TextCorpus:
                 gensim_custom_tokenizer=self.gensim_custom_tokenizer
             )
 
-        self.corpus += [dock]
-        self.labels += [text_document.doc_label]
         for k, v in text_document.token_count.items():
             self.token_absolute_count[k] += v
             self.token_doc_count[k] += 1
+
+        if stream:
+            return dock, text_document.doc_label
+
+        self.corpus += [dock]
+        self.labels += [text_document.doc_label]
 
     def get_corpus(self, tokens=None):
         if tokens is None:
