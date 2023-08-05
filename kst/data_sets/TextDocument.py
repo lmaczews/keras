@@ -30,6 +30,10 @@ class TextDocument:
     def vocabulary(self):
         return self.token_count.keys()
 
+    @property
+    def tokens_count(self):
+        return len(self.vocabulary)
+
     def read_document(self, gensim_custom_tokenizer=None):
         self.token_count = defaultdict(int)
         with open(self.doc_path, "r") as f:
