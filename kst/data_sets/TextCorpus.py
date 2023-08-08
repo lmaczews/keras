@@ -111,11 +111,11 @@ class TextCorpus:
             return self.corpus, tok2index, index2tok
 
         result = []
-        for dock in tqdm(self.corpus, desc="Getting corpus"):
-            result += [np.setdiff1d(dock, excluded_tokens).tolist()]
-
         for index, token in enumerate(np.setdiff1d(self.vocabulary, excluded_tokens).tolist()):
             tok2index[token] = index
             index2tok[index] = token
+
+        for dock in tqdm(self.corpus, desc="Getting corpus"):
+            result += [[token for token in dock if tok2index.get(token) is not None]]
 
         return result, tok2index, index2tok
