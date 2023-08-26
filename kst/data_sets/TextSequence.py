@@ -14,6 +14,14 @@ class TextSequence():
         self.token_count[self.begin_of_sequence] += 1
         self.token_count[self.end_of_sequence] += 1
 
+    @property
+    def vocabulary(self):
+        return self.token_count.keys()
+
+    @property
+    def tokens_count(self):
+        return len(self.vocabulary)
+
     def s2s_text_preprocessing(self, text):
         '''Clean text by removing unnecessary characters and altering the format of words.'''
 
@@ -35,6 +43,7 @@ class TextSequence():
         text = re.sub(r"can't", "cannot", text)
         text = re.sub(r"n't", " not", text)
         text = re.sub(r"n'", "ng", text)
+        text = re.sub(r"let's", "let us", text)
         text = re.sub(r"'bout", "about", text)
         text = re.sub(r"'til", "until", text)
         text = re.sub(r"[-()\"#/@;:<>{}`+=~|.!?,]", "", text)
