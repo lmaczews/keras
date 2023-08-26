@@ -11,6 +11,8 @@ class TextSequence():
         self.token_count = defaultdict(int)
         self.begin_of_sequence = begin_of_sequence
         self.end_of_sequence = end_of_sequence
+        self.token_count[self.begin_of_sequence] += 1
+        self.token_count[self.end_of_sequence] += 1
 
     def s2s_text_preprocessing(self, text):
         '''Clean text by removing unnecessary characters and altering the format of words.'''
@@ -52,6 +54,7 @@ class TextSequence():
             self.token_count[token] += 1
 
         self.txt_sequence += [tokens]
+
 
     def pair_sequence(self):
         i = 0
