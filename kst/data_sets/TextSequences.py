@@ -4,7 +4,7 @@ from collections import defaultdict
 from gensim.parsing.preprocessing import preprocess_string
 
 
-class TextSequence():
+class TextSequences():
 
     def __init__(self, begin_of_sequence='<BOS>', end_of_sequence='<EOS>'):
         self.txt_sequence = []
@@ -22,7 +22,7 @@ class TextSequence():
     def tokens_count(self):
         return len(self.vocabulary)
 
-    def s2s_text_preprocessing(self, text):
+    def text_preprocessing(self, text):
         '''Clean text by removing unnecessary characters and altering the format of words.'''
 
         text = text.lower()
@@ -50,9 +50,9 @@ class TextSequence():
 
         return text
 
-    def add_element(self, text, gensim_custom_tokenizer=None, initial_preprocessing=True):
+    def add_sequence(self, text, gensim_custom_tokenizer=None, initial_preprocessing=True):
         if initial_preprocessing:
-            text = self.s2s_text_preprocessing(text)
+            text = self.text_preprocessing(text)
 
         if gensim_custom_tokenizer is not None:
             tokens = preprocess_string(text, gensim_custom_tokenizer)
@@ -64,8 +64,7 @@ class TextSequence():
 
         self.txt_sequence += [tokens]
 
-
-    def pair_sequence(self):
+    def get_two_consecutive_sequences(self):
         i = 0
         while len(self.txt_sequence) > i + 1:
             yield self.txt_sequence[i], [self.begin_of_sequence] + self.txt_sequence[i + 1] + [self.end_of_sequence]
