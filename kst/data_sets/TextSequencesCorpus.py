@@ -16,8 +16,8 @@ class TextSequencesCorpus:
 
     def prepare_token_to_index_mappings(self):
         for index, token in enumerate(self.vocabulary):
-            self._token2index[token] = index
-            self._index2token[index] = token
+            self._token2index[token] = index + 1
+            self._index2token[index + 1] = token
 
     def get_index(self, token):
         return self._token2index.get(token)
